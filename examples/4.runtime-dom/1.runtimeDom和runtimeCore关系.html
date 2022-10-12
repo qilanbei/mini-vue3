@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <!-- <script src="../../packages/"></script> -->
+  <script>
+    /*
+      为了解耦，vue将 runtime 逻辑分成了两个模块
+      运行时 （不依赖平台的browser），主要靠的是虚拟dom，它是可以跨平台的
+      1. runtime-core // 提供跨平台操作，依赖 reactivity 响应式模块
+      2. runtime-dom 
+      // 运行时的 dom 模块，不具备跨平台能力；
+      // 提供一个渲染器，这个渲染器可以渲染虚拟dom节点到指定的容器中
+      // 依赖 runtime-core 中的 虚拟 dom 操作
+      两者联系
+      runtime-core： 
+      {isVNode等}
+      runtime-dom：
+        patchProp () {
+          patchClass
+          patchStyle
+          pathAttr
+          patchEvent
+        }
+    */
+  </script>
+</body>
+</html>

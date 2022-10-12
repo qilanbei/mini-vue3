@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    /*
+      ^ 异或运算：无进位相加(相加不会进位)
+
+      规则：
+        1. 0 ^ N = N
+        2. N ^ N = 0
+        3. A ^ B ^ C = A ^ C ^ B (满足交换律)
+        4. A ^ (B ^ C) = B ^ (A ^ C) (满足结合律)
+        5. A ^ B = C , B = C ^ A , A = C ^ B
+
+      示例：
+      4 ^ 7
+      0100
+      0111
+      0011 3
+
+      技巧：
+      1. 交换两个变量的值
+      let a = 4, b = 5
+      a = a ^ b
+      b = a ^ b
+      a = a ^ b
+      console.log(a, b)
+      2. 一个数组中有一种数出现了奇数次，其他数都出现了偶数次，怎么找到并打印这种数
+      const arr = [7, 6, 5, 6, 5, 7, 7]
+      let res = 0
+      for (let i = 0; i < arr.length; i++) {
+        res ^= arr[i]
+      }
+      console.log(res)
+    */
+  </script>
+</body>
+
+</html>

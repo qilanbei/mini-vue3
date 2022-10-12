@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <!-- <script src="../../node_modules/@vue/runtime-dom/dist/runtime-dom.global.js"></script> -->
+  <script src="../../packages/runtime-dom/dist/runtime-dom.global.js"></script>
+  <!-- <script src="../../../mini-vue3-github/packages/runtime-dom/dist/runtime-dom.global.js"></script> -->
+  <script>
+    const { h, render } = VueRuntimeDOM
+
+    const component = {
+      data() {
+        return {
+          a: 1
+        }
+      },
+      // 1、component mount
+      // render() {
+      //   return h('button', this.a)
+      // }
+      // 2、component mount update
+      render() {
+        console.log('render');
+        return h('button', {
+          style: {
+            'font-size': '20px'
+          },
+          onClick: () => {
+            this.a++
+            console.log(this.a);
+          }
+        }, this.a)
+      }
+    }
+
+    const componentVNode = h(component)
+    // console.log(componentVNode, 'componentVNode');
+    render(componentVNode, app)
+    // const subComponent = {
+    //   data() {
+    //     return {
+    //       b: 1
+    //     }
+    //   },
+    //   render() {
+    //     return h('button', this.b)
+    //   }
+    // }
+    // const subComponentVNode = h(subComponent)
+    // setTimeout(() => {
+    //   render(subComponentVNode, app)
+    // }, 2000)
+  </script>
+</body>
+
+</html>

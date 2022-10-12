@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    /* 获取最长递增子序列的长度
+      动态规划：
+      1、dp[i] 维护每次遍历取到的上升子序列的长度，默认初始值 为 1（只要 nums 是有效数组，最短子序列长度 为1 ）
+      2、从头到尾遍历数组：如果j没到i 就遍历查询 后一个是不是比前一个数值大，大的话，
+      就说明找到一个上升序列的部分上升路径，所以就将前一个dp保存的上升子序列的长度 + 1
+      3、最后找到dp里面最大值，就是最长递增子序列的 最长 长度
+    */
+
+    // function lengthOfLIS(nums) {
+    //   let dp = []
+    //   for (let i = 0; i < nums.length; i++) {
+    //     // 默认dp 每一项 上升子序列的长度最短为1
+    //     dp[i] = 1
+    //     for (let j = 0; j < i; j++) {
+    //       if (nums[i] > nums[j]) {
+    //         // 后一项 比前一项 大 就说明上升子序列的路径就需要多 + 1
+    //         // 每次都要存 和 上一次对比之后 最大的 长度
+    //         dp[i] = Math.max(dp[i], dp[j] + 1)
+    //       }
+    //     }
+    //   }
+    //   console.log(dp.toString());
+    //   return Math.max(...dp)
+    // }
+
+
+    /* 获取最长递增子序列的长度
+      贪心 + 二分法
+    */
+    function lengthOfLIS(nums) {
+      if (!nums?.length) return -1;
+      if (nums.length === 1) return 1;
+      let tail = [nums[0]], end = 0;
+      for (let i = 1; i < nums.length; i++) {
+        if (nums[i] > tail[end]) {
+          end++;
+          tail[end] = nums[i]
+        } else {
+          // 二分查找法
+          let left = 0, right = end;
+          while (left < right) {
+            let mid = left + ((right - left) >> 1);
+            if (tail[mid] < nums[i]) {
+              left = mid + 1;
+            } else {
+              right = mid;
+            }
+          }
+          tail[left] = nums[i]
+        }
+      }
+      end++;
+      return end;
+    }
+
+    const a = [10, 9, 2, 5, 3, 7, 101, 18]
+    const r = lengthOfLIS(a)
+    console.log(r);
+  </script>
+</body>
+
+</html>

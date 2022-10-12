@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <!-- <script src="../node_modules/@vue/reactivity/dist/reactivity.global.js"></script> -->
+  <script src="../packages/reactivity/dist/reactivity.global.js"></script>
+  <script>
+    /*
+      1. ref()：接受一个内部值，返回一个响应式的、可更改的 ref 对象，此对象只有一个指向其内部值的属性 .value
+      2. unref()：如果参数是 ref，则返回内部值，否则返回参数本身
+      3. toRef()：基于响应式对象上的一个属性，创建一个对应的 ref。这样创建的 ref 与其源属性保持同步：改变源属性的值将更新 ref 的值，反之亦然
+      4. toRefs()：将一个响应式对象转换为一个普通对象，这个普通对象的每个属性都是指向源对象相应属性的 ref。每个单独的 ref 都是使用 toRef() 创建的
+      4. customRef()：创建一个自定义的 ref，显式声明对其依赖追踪和更新触发的控制方式。
+    */
+    const { effect, ref, unref, toRef, toRefs, customRef, reactive } = VueReactivity
+    // 一、ref
+    // 1. ref 一个基础类型
+    // const info = ref(1)
+    // 2. ref 一个复杂类型
+    // const state = reactive({ age: 20 })
+    // const info = ref(state)
+    // 3. 设置的时候，设置成reactive
+    // const info = ref({ age: 19 })
+    // console.log(info, 'info')
+
+    // effect(() => {
+    //   console.log('render')
+    // app.innerHTML = info.value
+    // app.innerHTML = info.value.age
+    // app.innerHTML = info.value.age
+    // })
+
+    // setTimeout(() => {
+    // info.value = 2
+    // info.value.age = 20
+    // info.value = state
+    // }, 2000)
+
+    // 二、unref
+    // const state = ref({ age: 1 })
+    // 使用state，需要 state.value 获取，无法直接解构state
+    // const { age } = state
+    // vue 提供 unref api 帮助我们在内部.value，实现了.value的语法糖
+    // const { age } = unref(state)
+    // console.log(age, 'age')
+    // effect(() => {
+    //   app.innerHTML = state.value.age
+    //   app.innerHTML = unref(state).age
+    // })
+
+    // setTimeout(() => {
+    //   state.value.age = 2
+    // }, 2000)
+
+    // 三、toRef
+    // let flag = ref(false)
+    // const state = ref({ age: 1 })
+    // const toRefAge = toRef(state, 'age', 2)
+    // console.log(state, 'state')
+    // console.log(toRefAge, 'toRefAge')
+    // effect(() => {
+    //   // app.innerHTML = state.value
+    //   app.innerHTML = flag.value ? state.value.age : toRefAge.value
+    // })
+    // setTimeout(() => {
+    //   flag.value = true
+    // }, 2000)
+
+    // 四、toRefs
+    // const state = reactive({ age: 1 })
+    // const { age } = toRefs(state)
+    // console.log(age)
+    // effect(() => {
+    //   app.innerHTML = age.value
+    // })
+
+    // setTimeout(() => {
+    //   age.value++
+    // }, 2000);
+
+    // 五、customRef
+    // const state = reactive({ age: 1 })
+
+    // let age = 1
+    // const factoryFn = (track, trigger) => {
+    //   return {
+    //     get() {
+    //       track()
+    //       return age
+    //     },
+    //     set(newVal) {
+    //       age = newVal
+    //       trigger()
+    //     }
+    //   }
+    // }
+
+    // const info = customRef(factoryFn)
+    // console.log(info, 'info')
+
+    // effect(() => {
+    //   app.innerHTML = unref(info)
+    // })
+
+    // setTimeout(() => {
+    //   info.value = 2
+    // }, 2000)
+
+  </script>
+</body>
+
+</html>

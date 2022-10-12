@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>effect 源码实现</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <!-- <script src="../node_modules/@vue/reactivity/dist/reactivity.global.js"></script> -->
+  <script src="../packages/reactivity/dist/reactivity.global.js"></script>
+  <script>
+    /*
+      1. effect 一上来就会先执行一次
+         直接run
+      2. 当 effect 中的响应式数据发生了变化后会重新执行
+        指针 activeEffect  
+        function effect (fn) {
+          劫持函数执行，增加 activeEffect 指针 增加一个 ReactiveEffect 类 用来封装
+          class ReactiveEffect {
+            public parent
+            public deps [] // 用来当垃圾桶用 后期方便倒垃圾 装的是 depsMap  =》 {key: Set[e1,e2]}
+            public active = true // 外界stop后为false
+            construct (public fn) {
+              run {
+                if (!active) return fn.run()
+                try {
+                  this.parent = activeEffect undefined
+                  activeEffect = this
+                  fn()
+                } finally {
+                  activeEffect = this.parent
+                  this.parent = undefined
+                }
+              }
+            }
+          }
+          fn()
+        }
+    */
+    const { effect, reactive } = VueReactivity
+    const info = reactive({ age: 1 })
+
+    effect(() => {
+      app.innerHTML = info.age
+    })
+
+    setTimeout(() => {
+      info.age++
+    }, 2000)
+  </script>
+</body>
+
+</html>

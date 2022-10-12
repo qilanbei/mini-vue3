@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <!-- <script src="../../node_modules/@vue/runtime-dom/dist/runtime-dom.global.js"></script>  -->
+  <script src="../../packages/runtime-dom/dist/runtime-dom.global.js"></script>
+  <script>
+    const { h, render } = VueRuntimeDOM
+
+    // a b [c d e] f g
+    // a b [d e h] f g
+
+    // [c d e] a b f g
+    // a b [d e c] f g
+    // const oldVNode = [
+    //   h('span', { key: 'c' }, 'c'),
+    //   h('span', { key: 'd', class: "nihao" }, 'd'),
+    //   h('span', { key: 'e' }, 'e'),
+    //   h('span', { key: 'a', class: "nihao1" }, 'a'),
+    //   h('span', { key: 'b' }, 'b'),
+    //   h('span', { key: 'f' }, 'f'),
+    //   h('span', { key: 'g' }, 'g'),
+    // ]
+    // const newVNode = [
+    //   h('span', { key: 'c', class: "nihao" }, 'c'),
+    //   h('span', { key: 'e' }, 'e'),
+    //   h('span', { key: 'd', style: { color: 'red' } }, 'd'),
+    //   h('span', { key: 'a' }, 'a'),
+    //   h('span', { key: 'b' }, 'b'),
+    //   h('span', { key: 'f' }, 'f'),
+    //   h('span', { key: 'g' }, 'g'),
+    // ]
+
+    // a b [c d e] f g
+    // a b [e d h] f g
+    // i !== increasingNewIndexSequence[j] 逻辑举例
+    const oldVNode = [
+      h('span', { key: 'a' }, 'a'),
+      h('span', { key: 'b' }, 'b'),
+      h('span', { key: 'c' }, 'c'),
+      h('span', { key: 'd' }, 'd'),
+      h('span', { key: 'e' }, 'e'),
+      h('span', { key: 'f' }, 'f'),
+      h('span', { key: 'g' }, 'g'),
+    ]
+    const newVNode = [
+      h('span', { key: 'a' }, 'a'),
+      h('span', { key: 'b' }, 'b'),
+      h('span', { key: 'e' }, 'e'),
+      h('span', { key: 'd' }, 'd'),
+      h('span', { key: 'h' }, 'h'),
+      h('span', { key: 'f' }, 'f'),
+      h('span', { key: 'g' }, 'g'),
+    ]
+
+    // const oldVNode = [
+    //   h('span', { key: 'a' }, 'a'),
+    //   h('span', { key: 'b' }, 'b'),
+    //   h('span', { key: 'c' }, 'c'),
+    //   h('span', { key: 'd', class: "nihao" }, 'd'),
+    //   h('span', { key: 'e' }, 'e'),
+    // ]
+    // const newVNode = [
+    //   h('span', { key: 'a' }, 'a'),
+    //   h('span', { key: 'b' }, 'b'),
+    //   h('span', { key: 'd', style: { color: 'red' } }, 'd'),
+    //   h('span', { key: 'e' }, 'e'),
+    //   h('span', { key: 'h' }, 'h'),
+    // ]
+
+    render(h('div', oldVNode), app)
+
+    setTimeout(() => {
+      render(h('div', newVNode), app)
+    }, 2000)
+  </script>
+</body>
+
+</html>

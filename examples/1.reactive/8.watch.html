@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>effect 源码实现</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <!-- <script src="../node_modules/vue/dist/vue.global.js"></script> -->
+  <script src="../packages/reactivity/dist/reactivity.global.js"></script>
+  <script>
+    const { reactive, watch } = VueReactivity
+    // const { effect, reactive, computed, watch } = VueReactivity
+
+    const state = reactive({ age: [1] })
+    /* 
+      watch特性：watch(source, cb, options)
+        参数source：侦听器的源，可以是一个响应式对象；一个 函数返回一个值 () => value （先实现这两种）
+        参数cb：在发生变化时要调用的回调函数，(newVal, oldVal) => {}
+        参数options：{ immediate, deep, flush, onTrack / onTrigger }
+    */
+
+    watch(state, (newVal, oldVal) => {
+      console.log(newVal, oldVal)
+      app.innerHTML = JSON.stringify(newVal)
+    }, { immediate: true })
+    // 试一下  watch 给一个 原来的值 set 后 看  new old value对比
+    // watch(() => state.age, (newVal, oldVal) => {
+    //   console.log(newVal, oldVal)
+    //   app.innerHTML = JSON.stringify(newVal)
+    // }, { immediate: true })
+
+    setTimeout(() => {
+      state.age[0]++
+    }, 2000)
+  </script>
+</body>
+
+</html>

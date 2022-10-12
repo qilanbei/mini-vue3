@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>reactive 源码实现</title>
+</head>
+
+<body>
+  <!-- <script src="../node_modules/@vue/reactivity/dist/reactivity.global.js"></script> -->
+  <script src="../packages/reactivity/dist/reactivity.global.js"></script>
+  <script>
+    /*
+      1. reactive 只能代理对象类型的数据
+        伪代码：判断!obj return value
+      2. reactive 深度代理是懒代理的(读取到是一个对象时，会再次进行代理)
+        如果是obj = a:{1, b: {c: 2}}，当obj.b的时候，触发get操作，才将b: {c: 2}进行reactive代理（即包装成Proxy并进行依赖收集）
+      3. 已经被 reactive 代理过的数据会被缓存起来,再次用 reactive 代理时会返回缓存的数据
+        reactive 方法中：如果 proxyValue = ProxyMap.get(value) proxyValue true 说明是一个proxy 直接 return
+        // ProxyMap 其实是个WeakMap....  全局的
+      4. 代理 代理对象会返回之前的代理对象
+       如果：const info1 = reactive(info)
+            const info2 = reactive(info)
+       info1 === info2 true
+       如何实现：利用下次有地方有访问属性，例：info1.heroine 一定会触发get方法，一定会做依赖收集=track，此时标记isReactive
+       在 reactive 方法中：判断 如果有 isReactive true 就直接返回
+      5. reactive 原理是基于 Proxy 实现的
+      proxyMap = new WeakMap()
+        function reactive (value) {
+          !obj return value
+          proxyValue = proxyMap.get(value)
+          if proxyValue return value
+          if value.isReactive return value
+          const proxy = new Proxy(value, {get..., set...})
+          get track -> 应该有个全局的指针activeEffect 记录当前effect (fn) 上报给一个WeakMap，用完清空，
+          记录parent,否则 
+          // 例：effect(() => { e1 parent undefined activeEffect e1 
+            info.bookName
+            effect(() => {  e2 parent e1 activeEffect e2 
+              info.bookName
+            }) activeEffect e1 parent undefined
+            info.plot 
+          }) activeEffect undefined parent undefined
+          WeakMap结构: {value: Map{targetKey: Set(effect1,effect2)}}}
+          set trigger fn.run() 
+          proxyMap.set(value, proxy)
+          return proxy
+        }
+    */
+    const { reactive, effect } = VueReactivity
+    const info = { bookName: "鱼猎", heroine: '俞静', plot: { a: 1 } }
+    // 创建一个响应式对象：
+    const info1 = reactive(info)
+    const info2 = reactive(info1)
+    // console.log(info1, 'info1')
+    // info2
+    // console.log(info2.plot, 'info2')
+    console.log(info1.plot, 'info222')
+    // console.log(info1 === info2)
+
+    // console.log('plot', info1.plot)
+  </script>
+</body>
+
+</html>

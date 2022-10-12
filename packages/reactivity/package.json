@@ -1,0 +1,14 @@
+{
+  "name": "reactivity",
+  "version": "1.0.0",
+  "description": "reactivity reactive响应式源码实现",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "buildOptions": {
+    "name": "VueReactivity"
+  },
+  "author": "niwei",
+  "license": "ISC"
+}

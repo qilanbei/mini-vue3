@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>effect 源码实现</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <!-- <script src="../node_modules/@vue/reactivity/dist/reactivity.global.js"></script> -->
+  <script src="../packages/reactivity/dist/reactivity.global.js"></script>
+  <script>
+    /*
+      1. effect 一上来就会先执行一次
+      2. 当 effect 中的响应式数据发生了变化后会重新执行
+    */
+    const { effect, reactive } = VueReactivity
+    const state = reactive({ bookName: 'yuLie', num: 24, flag: true })
+
+
+    /*
+      问题：实际效果render 被打印了三次，
+      effect 上来 run render了一次
+      flag = false， render了一次
+      bookName = 'yuJing'， render 了一次，
+      但我们想要的是，flag 都已经为false了，页面输出 num，当 bookName 再变化，我们也不需要重新执行render了
+      通过 clearUpEffect 处理
+    */
+    // flag -> set[e1] bookName -> set[e1]
+    const runner = effect(() => { // e1
+      app.innerHTML = state.flag ? state.bookName : state.num
+    })
+    // // Map(flag: Set[e1], bookName: Set[e2])
+    setTimeout(() => {
+      state.flag = false
+      setTimeout(() => {
+        state.bookName = 'yuJing'
+      }, 1000)
+    }, 1000)
+  </script>
+</body>
+
+</html>

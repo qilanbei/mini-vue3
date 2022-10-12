@@ -1,0 +1,14 @@
+{
+  "name": "runtime-dom",
+  "version": "1.0.0",
+  "description": "runtime dom",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "buildOptions": {
+    "name": "VueRuntimeDOM"
+  },
+  "author": "niwei",
+  "license": "ISC" 
+}

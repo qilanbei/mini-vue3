@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "outDir": "dist", // 输出的目录
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": false,
+    "jsx": "preserve", // jsx 不转义
+    "sourceMap": true,
+    "resolveJsonModule": true,  // 解析 json 模块
+    "esModuleInterop": true, // 允许通过 es6 语法引入 commonjs 模块
+    "lib": ["esnext", "dom"],
+    "baseUrl": ".",  // 当前目录，即项目根目录作为基础目录
+    "paths": { // 路径别名配置
+      "@my-vue/*": ["./packages/*/src"]
+    },
+    "types": ["vite/client"] // ?? 干什么用的
+  },
+  // "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
+}

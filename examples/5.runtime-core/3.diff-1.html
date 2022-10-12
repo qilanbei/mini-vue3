@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <!-- <script src="../../node_modules/@vue/runtime-dom/dist/runtime-dom.global.js"></script>  -->
+  <script src="../../packages/runtime-dom/dist/runtime-dom.global.js"></script>
+  <script>
+
+    // diff 复用 dom,减少dom的开销
+
+    const { h, render } = VueRuntimeDOM
+
+    // 测试，n1 n2 对比是否相等
+    // const vnode = h('span', props, 'ceshiceshi')
+    // render(vnode, app)
+    // render(vnode, app)
+
+    /* 测试：
+    * 1、新文本   旧文本
+    * 2、新文本   旧数组
+    * 3、新文本   旧  空
+    */
+
+    // 1、新文本   旧文本
+    // const oldVNode = h('p', 'before')
+    // const newVNode = h('p', 'after')
+
+    // 2、新文本   旧数组
+    // const oldVNode = h('p', [h('span', 'hello')])
+    // const newVNode = h('p', 'before')
+
+    // 3、新文本   旧  空
+    // const oldVNode = h('p', '')
+    // const newVNode = h('p', 'before')
+
+    /* 测试：
+    * 1、新数组  旧文本
+    * 2、新数组  旧数组
+    * 3、新数组  旧空
+    */
+
+    // 1、新数组  旧文本
+    // const oldVNode = h('p', 'a')
+    // const newVNode = h('p', [h('span', 'hello')])
+
+    // 2、新数组  旧数组
+    // const oldVNode = h('p', [h('span', 'hello1')])
+    // const newVNode = h('p', [h('span', 'hello')])
+    const oldVNode = [2222]
+    const newVNode = [11111]
+
+    // 3、新数组  旧空
+    // const oldVNode = h('p', '')
+    // const newVNode = h('p', [h('span', 'hello')])
+
+    /* 测试：
+    * 1、新空  旧文本
+    * 2、新空  旧数组
+    * 3、新空  旧空
+    */
+
+    // 1、新空  旧文本
+    // const oldVNode = h('p', 'a')
+    // const newVNode = h('p', '')
+
+    // 2、新空  旧数组
+    // const oldVNode = [
+    //   h('span', { key: 'a' }, 'a'),
+    //   h('span', { key: 'b' }, 'b'),
+    //   h('span', { key: 'c' }, 'c'),
+    //   h('span', { key: 'd', class: "nihao" }, 'd'),
+    //   h('span', { key: 'e' }, 'e'),
+    // ]
+    // const newVNode = [
+    //   h('span', { key: 'a' }, 'a'),
+    //   h('span', { key: 'b' }, 'b'),
+    //   h('span', { key: 'd', style: { color: 'red' } }, 'd'),
+    //   h('span', { key: 'e' }, 'e'),
+    //   h('span', { key: 'h' }, 'h'),
+    // ]
+
+    // 3、新数组  旧空
+    // const oldVNode = h('p', '')
+    // const newVNode = h('p', [h('span', 'hello')])
+
+    render(h('div', oldVNode), app)
+
+    setTimeout(() => {
+      render(h('div', newVNode), app)
+    }, 2000)
+
+
+    /*
+    第一步：前后比较  如果后面的大  就 push 进去 result 并使用p记录当前索引 就 continue 结束当前循环
+    第二步：二分查找 通过二分查找 提高查询效率，如果 mid 对应的 值 比 目标 arrI 小 就直接 start + 1 继续找后面的
+    第三步：比较 如果当前项比 之前遍历过的 小，就替换成更小的值的索引
+    第四步：通过p 修正数组，因为通过贪心 + 二分查找 找出来的子序列有时候是不正确的，但是总数是对的
+    [7, 3, 6, 4, 9, 3, 8, 2]
+      p [7, 3, 6, 4, 9, 3, 8, 2]
+    7
+    3
+    3 6
+      p [7, 3, 1, 4, 9, 3, 8, 2]
+    current (4)  result = [1, 2]
+      p [7, 3, 1, 1, 9, 3, 8, 2]   TODO： 疑问  4 替换掉 6  p 的索引 记得是 1
+    */
+  </script>
+</body>
+
+</html>

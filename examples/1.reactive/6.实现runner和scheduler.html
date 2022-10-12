@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>effect 源码实现</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <!-- <script src="../node_modules/@vue/reactivity/dist/reactivity.global.js"></script> -->
+  <script src="../packages/reactivity/dist/reactivity.global.js"></script>
+  <script>
+    const { effect, reactive } = VueReactivity
+
+    const state = reactive({ name: 'zcf', age: 24, flag: true })
+
+    let waiting = false
+
+    // 需要 effect 函数返回 this.run this 绑定当前effect 
+    const runner = effect(() => {
+      console.log('render')
+      app.innerHTML = state.age
+    }, {
+      scheduler: () => {
+        if (!waiting) {
+          waiting = true
+          Promise.resolve().then(() => {
+            runner()
+            waiting = false
+          })
+        }
+      }
+    })
+
+    /*
+      问题：没有 实现 scheduler
+        此时会更新打印render四次，但是我们想要的是每次++完，更新一次就好了
+        那就要实现把每次的++缓存中，然后一次性render更新
+      解决方案：
+        通过 实现 scheduler，自定义更新
+        scheduler：
+          我们利用 Promise.resolve() 微任务的特性，帮我们把++操作缓存起来
+          然后再执行 runner
+        所以 scheduler 有的话，就执行 scheduler，就不执行 run 了
+        要在 trigger run的时候判断 scheduler 是否存在
+    */
+    setTimeout(() => { // e1
+      state.age++
+      state.age++
+      state.age++
+    }, 1000)
+  </script>
+</body>
+
+</html>

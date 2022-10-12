@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">测试测试</div>
+  <!-- <script src="../../node_modules/@vue/runtime-dom/dist/runtime-dom.global.js"></script> -->
+  <script src="../../packages/runtime-dom/dist/runtime-dom.global.js"></script>
+  <script>
+    /*
+      h() ： 用来创建虚拟节点
+      参数：
+      function h(
+        type: string | Component,
+        props?: object | null,
+        children?: Children | Slot | Slots
+      ): VNode
+      示例：
+      h('div', [h('span', 'hello')])
+      render() ：用来将虚拟dom节点挂载到指定元素上
+      createRenderer() ：自定义渲染器
+    */
+    const { render, h, createRenderer} = VueRuntimeDOM
+
+    // 示例：自定义渲染器 start
+    // const { render: userRender } = createRenderer({
+    //   createElement (type) {
+    //     console.log(type);
+    //     return document.createElement(type)
+    //   },
+    //   setElementText (el, text) {
+    //     console.log(el);
+    //     el.textContent = text
+    //   },
+    //   insert (el, container, anchor) {
+    //     console.log(el, container, anchor); // anchor 参照物
+    //     container.insertBefore(el, anchor)
+    //     /*
+    //       insertedNode = parentNode.insertBefore(newNode, referenceNode);
+    //       referenceNode newNode 将要插在这个节点之前
+    //       如果 referenceNode 为 null 则 newNode 将被插入到子节点的末尾*。*
+    //       相当于：如果 anchor 为null时，等价于 container.appendChild(el)
+    //     */
+    //   }
+    // })
+
+    // const vnode = h('div', 'hello word')
+    // console.log(vnode);
+
+    // userRender(vnode, app)
+    // 示例：自定义渲染器 end
+
+    // const vnode = h('div', 'hello word')
+    // // render 帮我们内置了 以上函数，如果用户不通过createRenderer自定义，那么就使用内置函数
+    // render(vnode, app)
+
+    // 示例：测试 patchStyle() start
+    const patchStyle = (el, oldStyle, newStyle) => {
+      // { color: red }  { color: blue }
+      const style = el.style
+      // 设置新样式
+      for (const key in newStyle) {
+        style[key] = newStyle[key]
+      }
+      // 如果之前的旧样式的属性，在新样式中没有那就直接删除
+      if (oldStyle) {
+        for (const key in oldStyle) {
+          if (!newStyle[key]) {
+            style[key] = ''
+          }
+        }
+      }
+    }
+
+    patchStyle(app, null, {color: 'red', fontSize: '20px'})
+
+    setTimeout(() => {
+      patchStyle(app, {color: 'red', fontSize: '20px'}, {color: 'blue'})
+    }, 3000)
+    // 示例：测试 patchStyle() end
+  </script>
+</body>
+</html>

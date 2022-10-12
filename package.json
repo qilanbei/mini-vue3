@@ -1,0 +1,33 @@
+{
+  "name": "mini-vue3",
+  "version": "1.0.0",
+  "description": "vue3源码实现练习，手写mini-vue3",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node ./script/dev.js runtime-dom --format=global",
+    "dev:runtimeDom": "node ./script/dev.js runtime-dom --format global",
+    "dev:runtimeCore": "node ./script/dev.js runtime-core --format global",
+    "build": "vue-tsc --noEmit && vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.2.37"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.1",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@vitejs/plugin-vue": "^1.3.0",
+    "@vue/compiler-sfc": "^3.0.5",
+    "esbuild": "^0.14.51",
+    "execa": "^6.1.0",
+    "minimist": "^1.2.6",
+    "rollup": "^2.77.2",
+    "rollup-plugin-typescript2": "^0.30.0",
+    "typescript": "^4.7.4",
+    "vite": "^2.4.4",
+    "vue-tsc": "^0.2.2"
+  }
+}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>effect 源码实现</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <!-- <script src="../node_modules/@vue/reactivity/dist/reactivity.global.js"></script> -->
+  <script src="../packages/reactivity/dist/reactivity.global.js"></script>
+  <script>
+    /*
+      1. effect 一上来就会先执行一次
+      2. 当 effect 中的响应式数据发生了变化后会重新执行
+    */
+    const { effect, reactive } = VueReactivity
+    const info = reactive({ age: 1 })
+
+    /* 问题1：死循环原因：
+        .age 触发get get track 收集到age -> e1
+        age++ 触发set set trigger e1.run()
+        e1.run()的时候 .age 又触发了get, track 继续收集，set继续run，就造成了死循环执行的问题
+      解决方案：
+        需要清除clear，思考在哪里清除呢？？run之前
+      问题2：增加了 clearUpEffect 之后造成的死循环原因：
+        我们effect实现里面：ReactiveEffect run函数中：
+        cleanUpEffect(this)
+        return this.fn()
+        clear清除了当前effect之后，又进行了run，run之后e1执行，触发get, get 又开始track，然后++触发了set，trigger开始run
+        然后又执行run函数，clear之后，又run，run了又clear，造成死循环
+      解决方案：
+        主要死循环因素是，收集起来的 weakMap里面的 （{age: 1}，Map(age: Set[e1])）
+        clear 和 run 的都是同一份set，如果能不是同一份，但是内存还是指向的同一个地址，也就是浅拷贝一份set结构
+    */
+    const runner = effect(() => {
+      console.log('render')
+      app.innerHTML = state.flag ? state.bookName : state.num
+    })
+    // Map(flag: Set[e1], bookName: Set[e2])
+    setTimeout(() => {  // e1
+      state.flag = false   // flag -> e1
+      setTimeout(() => {  // e2
+        state.bookName = 'yuJing' // bookName -> e2
+      }, 1000)
+    }, 1000)
+  </script>
+</body>
+
+</html>

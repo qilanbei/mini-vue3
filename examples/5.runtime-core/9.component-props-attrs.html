@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <!-- <script src="../../node_modules/@vue/runtime-dom/dist/runtime-dom.global.js"></script> -->
+  <script src="../../packages/runtime-dom/dist/runtime-dom.global.js"></script>
+  <!-- <script src="../../../mini-vue3-github/packages/runtime-dom/dist/runtime-dom.global.js"></script> -->
+  <script>
+    const { h, render } = VueRuntimeDOM
+
+
+    const component = {
+      props: {
+        b: String // vnode 里面的 component 组件内部的props
+      },
+      data() {
+        return {
+          a: 1
+        }
+      },
+      render() {
+        return h('button', {
+          style: {
+            'font-size': '20px'
+          },
+          onClick: () => {
+            this.a++
+            console.log(this.a);
+            console.log(this.b);
+            console.log(this.$data.a);
+            console.log(this.$props.b);
+            console.log(this.$attrs.c);
+          }
+        }, this.a)
+      }
+    }
+    const componentVNodeProps = { b: 'b', c: 'c' }
+    const componentVNode = h(component, componentVNodeProps)
+    // componentVNodeProps 是 h创建出来的 组件虚拟节点的 props
+    // vnode 里面的 props
+    console.log('componentVNode', componentVNode);
+    render(componentVNode, app)
+  </script>
+</body>
+
+</html>

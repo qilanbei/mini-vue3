@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="btn">click me !!</div>
+  <script>
+    /*
+      始终挂载一个事件fn，更新的时候切换fn，卸载的时候直接卸载fn
+    */
+
+    const fn1 = () => console.log('fn1')
+    const fn2 = () => console.log('fn2')
+
+    function createInvoker(newHandler) {
+      const fn = (event) => fn.value(event)
+      fn.value = newHandler
+      return fn
+    }
+
+    function patchEvent(el, key, oldHandler, newHandler) {
+      if (!key) return
+      const invokers = el.vei || (el.vei = {}) // vue event invoker
+      const event = invokers[key]
+      if (event && newHandler) {
+        // 更新
+        event.value = newHandler
+      } else {
+        const eventName = key.slice(2).toLowerCase()
+        if (newHandler) {
+          // 新增
+          const handler = invokers[key] || createInvoker(newHandler)
+          // 增加事件绑定
+          el.addEventListener(eventName, handler)
+        } else if (event) {
+          // 卸载
+          el.removeEventListener(eventName, event) // 事件始终绑定在event，所以将event卸载即可
+          invokers[key] = undefined
+        }
+      }
+    }
+
+    // 新增事件
+    patchEvent(btn, 'onClick', null, fn1)
+    setTimeout(() => {
+      // 更新事件
+      patchEvent(btn, 'onClick', fn1, fn2)
+      setTimeout(() => {
+        // 卸载事件
+        patchEvent(btn, 'onClick', fn2, null)
+      }, 2000)
+    }, 2000)
+
+  </script>
+</body>
+
+</html>

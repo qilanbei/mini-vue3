@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app"></div>
+  <!-- <script src="../../node_modules/@vue/runtime-dom/dist/runtime-dom.global.js"></script> -->
+  <script src="../../packages/runtime-dom/dist/runtime-dom.global.js"></script>
+  <script>
+    /*
+      h 函数的各种使用：
+    */
+    const { h } = VueRuntimeDOM
+    // attribute 和 property 都可以用于 prop
+    // const vnode = h('div', { class: 'bar', innerHTML: 'hello' })
+    // class 与 style 可以像在模板中一样    props是对象
+    // const vnode = h('div', { style:{color: 'red' }, innerHTML: 'hello' })
+    // 事件监听器应以 onXxx 的形式书写    props是对象
+    // const vnode = h('div', { onClick: () => { console.log('click')}, innerHTML: 'hello'})
+    // children 可以是一个字符串  四个参数以上
+    // const vnode =  h('div', { id: 'foo' }, 'hello', 'word')
+    // 没有 prop 时可以省略不写   
+    // const vnode = h('div', 'hello word') 
+    // const vnode =  h('div', [h('span', 'hello')])   props是数组
+    // children 数组可以同时包含 vnode 和字符串
+    // const vnode =  h('div', ['hello1', h('span', 'hello2')]) props是数组
+    // const vnode =  h('div', h('span', 'hello'))  props是对象 且是虚拟dom
+    // children: Array(1)
+    const vnode = h('div', 'hello word')
+    console.log(vnode)
+    // render(vnode, app)
+  </script>
+</body>
+</html>

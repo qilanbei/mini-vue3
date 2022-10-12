@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script src="../../packages/runtime-core/dist/runtime-core.global.js"></script>
+  <script>
+    /*
+      h 和 createVNode 区别：
+      // h() 除了类型必填以外，其他的参数都是可选的
+      h(标签, {属性},内容)
+      h(标签, {属性},[可以继续嵌套h()])
+      h('div', [h('span', 'hello')])
+      createVNode(标签, {属性},内容)
+      createVNode(标签, {属性},[可以继续嵌套createVNode()])
+
+      h 也是通过 createVNode 创建 vnode 的
+
+    */
+    const { createVNode } = VueRuntimeCore
+
+    createVNode('div', {color: 'red'}, 'hello')
+  </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <div id="btn1">
+      <div id="btn2">
+        <div id="btn3">click me</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    /*
+      模拟vue错误上报处理：
+        将绑定的事件 wrap 一下，catch处理错误
+        如果子组件内部发生了错误，向上找父组件，查找父组件全部的 errorCapture 遍历调用
+    */
+
+    // 模拟全局的事件处理handler
+    document.body.errorHandler = (err) => console.log('global error handler === ', err)
+    const appErrHandler = (err) => console.log('app')
+    const btn1ErrHandler = (err) => console.log('btn1')
+    const btn2ErrHandler = (err) => console.log('btn2')
+    const btn3ErrHandler = (err) => {
+      return new Promise((resolve, reject) => {
+        throw Error
+      })
+    }
+
+    app.ec = appErrHandler
+    btn1.ec = btn1ErrHandler
+    btn2.ec = btn2ErrHandler
+
+    // 事件处理
+
+    function createInvoker(newHandler) {
+      const fn = (event) => fn.value(event)
+      fn.value = newHandler
+      return fn
+    }
+
+    function patchEvent(el, key, oldHandler, newHandler) {
+      if (!key) return
+      const invokers = el.vei || (el.vei = {}) // vue event invoker
+      const event = invokers[key]
+      if (event && newHandler) {
+        // 更新
+        event.value = newHandler
+      } else {
+        const eventName = key.slice(2).toLowerCase()
+        if (newHandler) {
+          // 新增
+          const handler = invokers[key] || createInvoker(newHandler)
+          // 增加事件绑定
+          el.addEventListener(eventName, () => wrapErrorHandler(el, handler))
+        } else if (event) {
+          // 卸载
+          el.removeEventListener(eventName, event) // 事件始终绑定在event，所以将event卸载即可
+          invokers[key] = undefined
+        }
+      }
+    }
+
+    // wrapErrorHandler 拦截catch错误处理
+
+    const wrapErrorHandler = (el, fn) => {
+      const res = fn()
+      if (res && res.catch) {
+        res.catch(err => {
+          console.log(err)
+          handleError(el, err)
+        })
+      }
+      return res
+    }
+
+    // handleError 找父是否 errorCapture return false 如果false 停止向上处理
+
+    const handleError = (el, err) => {
+      if (!el) return
+      let cur = el.parentElement
+      while (cur) {
+        const errorCapturedHook = cur.ec // ec 就是当前元素的错误处理事件
+        if (errorCapturedHook) {
+          // 如果当前元素的 errorCapturedHook 执行 返回结果为false，则结束不往全局上报了
+          const res = errorCapturedHook(err)
+          if (res === false) return
+        }
+        cur = cur.parentElement
+      }
+      // while结束，到这里就触发全局错误捕获
+      const globalErrorHandler = document.body.errorHandler
+      globalErrorHandler && globalErrorHandler(err)
+    }
+
+    patchEvent(btn3, 'onClick', null, btn3ErrHandler)
+  </script>
+
+</body>
+
+</html>

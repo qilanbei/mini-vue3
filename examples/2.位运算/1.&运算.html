@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    /*
+      1. & 与运算：与（ & ）每一位进行比较，两位都为1，结果为1，否则为0
+
+      示例：
+      4 & 6
+      0100
+      0110
+      0100 4
+
+      规律：
+      1. n & 1，结果一定为0或者1
+
+      技巧使用：
+      1. 判断奇偶性（奇数的二进制表示末位为1，偶数为0）
+      function isOdd (n) {
+        return (n & 1) == 1
+      }
+
+      2. 用来判断用户权限：比如一个用户有四个权限 a、b、c、d 分别用 1（0001） 2（0010） 4（0100） 8（1000） （二进制）标识
+      那么 一个admin具有的权限就是  1 | 2 | 4 | 8 = 15，admin = 15（1111），如果判断用户是否具备某个权限就如下：
+
+      a 权限：admin & 1  1
+      b 权限：admin & 2  2
+      ...以此类推
+    */
+  </script>
+</body>
+
+</html>
