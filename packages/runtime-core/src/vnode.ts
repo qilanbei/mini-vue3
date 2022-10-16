@@ -1,4 +1,10 @@
-import { isNumber, isObject, isString, ShapeFlags } from "@my-vue/shared"
+import {
+  isArray,
+  isNumber,
+  isObject,
+  isString,
+  ShapeFlags,
+} from "@my-vue/shared"
 
 export const Text = Symbol("text")
 export const Fragment = Symbol("fragment")
@@ -22,10 +28,15 @@ export const createVNode = (type, props, children = null) => {
   }
 
   if (children) {
-    vnode.shapeFlag |=
-      isString(children) || isNumber(children)
-        ? ShapeFlags.TEXT_CHILDREN
-        : ShapeFlags.ARRAY_CHILDREN
+    if (isArray(children)) {
+      type = ShapeFlags.ARRAY_CHILDREN
+    } else if (isObject(children)) {
+      type = ShapeFlags.SLOTS_CHILDREN
+    } else {
+      type = ShapeFlags.TEXT_CHILDREN
+      children = String(children)
+    }
+    vnode.shapeFlag |= type
   }
 
   return vnode

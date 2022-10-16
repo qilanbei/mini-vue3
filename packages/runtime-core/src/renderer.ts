@@ -1,8 +1,10 @@
 import { reactive, ReactiveEffect } from "@my-vue/reactivity"
-import { isNumber, isString } from "@my-vue/shared"
+import { invokerArrayFns, isNumber, isString } from "@my-vue/shared"
 import { patchProp } from "packages/runtime-dom/src/patchProp"
 import { ShapeFlags } from "packages/shared/src/shapeFlags"
 import { createComponentInstance, setUpComponent } from "./component"
+import { updateProps } from "./componentProps"
+import { queueJob } from "./scheduler"
 import { isSameVNodeType, normalizeVNode, Text, Fragment } from "./vnode"
 
 export function createRenderer(options) {
@@ -43,14 +45,14 @@ export function createRenderer(options) {
 
   // 组件挂载
   const mountComponent = (vnode, container, anchor) => {
-    console.log("mountComponent")
+    // console.log("mountComponent")
 
     // 创建一个组件的实例
     const instance = (vnode.component = createComponentInstance(vnode))
     // 设置对应的  props slots 等
     setUpComponent(instance)
     // 挂载组件
-    setupRenderEffect(instance, container, anchor)
+    setupRenderEffect(instance, vnode, container, anchor)
   }
 
   // 挂载 children
@@ -63,14 +65,35 @@ export function createRenderer(options) {
       patch(null, child, el)
     }
   }
-  const setupRenderEffect = (instance, container, anchor) => {
-    const { data, render } = instance.type
 
+  const componentUpdatePreRender = (instance, next) => {
+    const prevProps = instance.props
+    const nextProps = next.props
+    updateProps(prevProps, nextProps)
+    instance.next = null // 更新完毕，next 置空
+    instance.vnode = next
+  }
+
+  const setupRenderEffect = (instance, vnode, container, anchor) => {
+    // console.log("setupRenderEffect")
+
+    const { data } = instance.type
+
+    const { render } = instance // setup component-render template-render等 做了优先级处理 并挂载到了 instance 上
+    let state
     // 1、定义响应式数据 将组件的 data
-    const state = (instance.data = reactive(data()))
+    if (data) {
+      state = instance.data = reactive(data())
+    }
     // 3、effectFn  只要这里面调用了响应式数据，便会触发get方法，便会收集依赖，等到有变化更新的时候 trigger，达到更新的目的
     const componentUpdateFn = () => {
+      // console.log("componentUpdateFn")
+
       if (!instance.isMounted) {
+        const { bm, m } = instance
+        if (bm) {
+          invokerArrayFns(bm)
+        }
         // 挂载
         // render 函数里面使用的this，要修改成当前的
         // render return 返回的 h 创建出来的 组件本部的虚拟节点, 也就是subTree
@@ -79,20 +102,42 @@ export function createRenderer(options) {
 
         patch(null, subTree, container, anchor)
         instance.isMounted = true
+
+        vnode.el = subTree.el // 组件包裹的根节点
+        // 因为 vnode.el 赋值的是 虚拟dom 上面的 el
+        // 所以 mounted的时候 保证虚拟dom 生成el 了，但是浏览器这时候不一定渲染完了
+        if (m) {
+          invokerArrayFns(m)
+        }
       } else {
         // 更新
+        const { next, bu, u } = instance
+        if (next) {
+          componentUpdatePreRender(instance, next)
+        }
+        if (bu) {
+          invokerArrayFns(bu)
+        }
         const nextTree = render.call(instance.proxy, state)
         const prevTree = instance.subTree
+        // console.log(2, nextTree)
+        // console.log(1, prevTree)
 
         patch(prevTree, nextTree, container, anchor)
         // 更新subtree
         instance.subTree = nextTree
+        vnode.el = nextTree.el
+        if (u) {
+          invokerArrayFns(u)
+        }
       }
     }
 
     // * 每次组件的创建 都new了新的实例，所以组件颗粒度越小，就会创建更多的实例，所以组件的颗粒度并不是越小越好
     // 2、定义一个 effect componentUpdateFn 就是 effect 传入的 effectFn
-    const effect = (instance.effect = new ReactiveEffect(componentUpdateFn))
+    const effect = (instance.effect = new ReactiveEffect(componentUpdateFn, {
+      scheduler: () => queueJob(update),
+    }))
     // 将组件更新方法 也挂载到组件实例上，以便其他地方调用
     const update = (instance.update = effect.run.bind(effect))
     update()
@@ -408,7 +453,7 @@ export function createRenderer(options) {
       mountChildren(n2.children, container)
     } else {
       // 更新
-      // patchChildren(n1, n2, container)
+      patchChildren(n1, n2, container)
     }
   }
 
@@ -422,15 +467,29 @@ export function createRenderer(options) {
   }
 
   const processComponent = (n1, n2, container, anchor) => {
-    console.log("processComponent")
-
     if (n1 == null) {
       // 走新增
       mountComponent(n2, container, anchor)
     } else {
       // 更新逻辑
-      console.log(3333)
+      // console.log("updateComponent")
+
+      updateComponent(n1, n2)
     }
+  }
+
+  const updateComponent = (n1, n2) => {
+    // n2 复用 n1 组件
+    const instance = (n2.component = n1.component)
+    // console.log("更新逻辑", n1, n2)
+    // 用实例外层的props（父级组件传过来的props） 来更新 component 内部的 props
+    // const prevProps = instance.props
+    // const nextProps = n2.props
+    // 由于 prevProps 是响应式的，当其发生变化时，对应的 effect (componentUpdateFn) 就会重新执行
+    // prevProps.age = 2
+    // ** 源码没有利用响应式，而是挂载在next 上 调用 update 方法，将更新处理 全部封装在了 componentUpdateFn 方法上
+    instance.next = n2
+    instance.update()
   }
 
   const render = (vnode, container) => {

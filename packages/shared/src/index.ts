@@ -3,7 +3,7 @@
  * @Author: your name
  * @Date: 2022-08-22 19:26:35
  * @LastEditors: your name
- * @LastEditTime: 2022-10-12 20:20:02
+ * @LastEditTime: 2022-10-17 01:14:29
  */
 /**
  * 判断对象
@@ -44,9 +44,16 @@ const onRE = /on[^a-z]/
 export const isOn = (key: string) => onRE.test(key)
 
 const hasOwnProperty = Object.prototype.hasOwnProperty
-export const hasOwn = (obj, key) => hasOwnProperty.call(obj, key)
+export const hasOwn = (obj, key) =>
+  isObject(obj) && hasOwnProperty.call(obj, key)
 
 export const isOwn = () => {}
+
+export const invokerArrayFns = (fns) => {
+  for (let i = 0; i < fns.length; i++) {
+    fns[i]()
+  }
+}
 
 export const enum ShapeFlags {
   ELEMENT = 1,

@@ -3,7 +3,7 @@
  * @Author: your name
  * @Date: 2022-08-23 19:27:06
  * @LastEditors: your name
- * @LastEditTime: 2022-10-12 21:23:15
+ * @LastEditTime: 2022-10-16 23:32:18
  */
 // 收集绑定 value fn effect WeakMap() => obj: Map[set:{targetValue:activeEffect},set]
 export let activeEffect
@@ -19,6 +19,8 @@ export function effect(fn, options) {
 }
 // effect 结构为：
 function cleanUpEffect(effect) {
+  // console.log("cleanUpEffect")
+
   // deps set集合 清理之前收集到的effect
   const deps = effect.deps
   if (deps.length > 0) {
@@ -35,6 +37,8 @@ export class ReactiveEffect {
   public deps = [] // 用来清理依赖的
   constructor(public fn, public options?) {}
   run() {
+    // console.log("run了")
+
     if (!this.active) {
       return this.fn()
     } else {
@@ -58,20 +62,24 @@ export function track(target, key) {
   if (!activeEffect) return
 
   let depsMap = proxyMap.get(target)
+
   // 判断 depsMap 没有的话，设置空的map
   if (!depsMap) {
     proxyMap.set(target, (depsMap = new Map()))
   }
   let deps = depsMap.get(key)
+  // console.log("track deps", deps)
+
   // 判断 dep 没有的话，设置空的set
   if (!deps) {
     depsMap.set(key, (deps = new Set()))
   }
-  console.log("track", key, deps)
   trackEffect(deps)
 }
 
 export function trackEffect(deps) {
+  // console.log("trackEffect", deps)
+
   if (activeEffect) {
     // 添加当前 activeEffect
     deps.add(activeEffect)
@@ -81,21 +89,29 @@ export function trackEffect(deps) {
 }
 
 export function trigger(target, key, value, oldValue) {
+  // console.log("trigger", target, key)
+
   // 就是需要 拿到 track 中的 deps 然后 run
   const depsMap = proxyMap.get(target)
   if (!depsMap) return
   const effects = depsMap.get(key)
+  // console.log("effects", effects)
+
   triggerEffect(effects)
 }
 
 export function triggerEffect(effects) {
   if (effects) {
+    // console.log("triggerEffect", effects)
     // 拷贝一份effect，解决clear run 的死循环问题
     effects = [...new Set(effects)]
+    // console.log(1111111111, effects)
+
     effects.forEach((effect) => {
       // 判断一下，以防止，同一个 key 重复执行同一个 effect
-      // TODO: 这里 effect 为什么能判断相等 set[]
+
       if (effect !== activeEffect) {
+        // console.log(22222)
         if (effect.options?.scheduler) {
           effect.options.scheduler()
         } else {

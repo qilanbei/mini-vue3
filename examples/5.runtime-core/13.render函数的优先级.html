@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <!-- <script src="../../node_modules/@vue/runtime-dom/dist/runtime-dom.global.js"></script> -->
+  <script src="../../packages/runtime-dom/dist/runtime-dom.global.js"></script>
+  <script>
+    /*
+      setup 可以返回一个函数，也就是render函数
+      setup 也可以返回一个对象
+      setup 如果返回一个函数，那么比render函数优先级高
+      如果返回的是一个对象 那就执行 component-render
+    */
+    const { render, h, Fragment, toRefs, reactive, ref } = VueRuntimeDOM
+
+    const component = {
+      setup() {
+        return () => {
+          return h('button', 'setup-render')
+        }
+      },
+      render() {
+        return h('button', 'component-render')
+      },
+    }
+
+    render(h(component), app)
+
+  </script>
+</body>
+
+</html>
