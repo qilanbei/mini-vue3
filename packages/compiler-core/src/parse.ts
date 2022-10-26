@@ -48,6 +48,15 @@ function advanceSpaces(context) {
   }
 }
 
+function createRoot(children, loc) {
+  return {
+    type: NodeTypes.ROOT,
+    children,
+    loc,
+  }
+}
+
+// 更新位置信息
 function advancePositionWithMutation(context, source, length) {
   // debugger
   let linesCount = 0
@@ -97,7 +106,9 @@ export function baseParse(content) {
   console.log(content)
   // 1、创建上下文
   const context = createParseContext(content)
-  return parseChildren(context)
+  const start = getCursor(context)
+  return createRoot(parseChildren(context), getSelection(context, start))
+  // return parseChildren(context)
 }
 
 function parseChildren(context) {

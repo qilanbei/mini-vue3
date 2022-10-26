@@ -50,15 +50,16 @@
         }
     */
     const { reactive, effect } = VueReactivity
-    const info = { bookName: "鱼猎", heroine: '俞静', plot: { a: 1 } }
+    const info = { name: "lisa", age: 18 }
     // 创建一个响应式对象：
     const info1 = reactive(info)
     const info2 = reactive(info1)
+    console.log(info1);
     // console.log(info1, 'info1')
     // info2
     // console.log(info2.plot, 'info2')
-    console.log(info1.plot, 'info222')
-    console.log(info1 === info2)
+    // console.log(info1.plot, 'info222')
+    // console.log(info1 === info2)
 
     // console.log('plot', info1.plot)
   </script>

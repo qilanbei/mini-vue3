@@ -4,7 +4,8 @@
   "description": "vue3源码实现练习，手写mini-vue3",
   "main": "index.js",
   "scripts": {
-    "dev": "node ./script/dev.js compiler-core --format=global",
+    "dev": "node ./script/dev.js reactivity --format=global",
+    "dev:compilerCore": "node ./script/dev.js compiler-core --format=global",
     "dev:runtimeDom": "node ./script/dev.js runtime-dom --format global",
     "dev:runtimeCore": "node ./script/dev.js runtime-core --format global",
     "build": "vue-tsc --noEmit && vite build",
